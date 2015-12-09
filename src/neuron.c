@@ -96,7 +96,7 @@ void neuron_free	(neuron		*target)
 
 
 
-/* This is testing test */
+
 
 void neuron_init	(neuron		*target)
 {
