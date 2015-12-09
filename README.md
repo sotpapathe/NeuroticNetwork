@@ -1,2 +1,2 @@
 # NeuroticNetwork
-Neural network simulator by Alex Tsonis and Sotiris Papatheodorou
+Neural network simulator by Alexandros Tsonis and Sotiris Papatheodorou
