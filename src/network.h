@@ -1,3 +1,4 @@
+/*
 Authors: Alexandros Tsonis, Sotiris Papatheodorou
 
 This file is part of NeuroticNetwork.
@@ -14,6 +15,7 @@ This file is part of NeuroticNetwork.
 
     You should have received a copy of the GNU General Public License
     along with NeuroticNetwork.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #ifndef _network_h
 #define _network_h
