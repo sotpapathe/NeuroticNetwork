@@ -58,13 +58,17 @@ void network_delta         (neural_net       *network,
                             int              neuron_pointer,
                             double           *deltaw);
 
-/*Set the weights of a neuron in the network equal to the deltaw array */
+/* Set the weights of a neuron in the network equal to the deltaw array */
 /* NO ERROR CHECKING */
-void network_init		   (neural_net		 *network,
+void network_setw		   (neural_net		 *network,
 							int				 layer_pointer,
 							int				 neuron_pointer,
 							double			 *deltaw);
 
-/**/
+/* Delete the network */
+/* NO ERROR CHECKING */
+void network_free		   (neural_net		 *network);
+
+
 #endif
 
