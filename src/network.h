@@ -51,13 +51,20 @@ typedef struct{                                 //Network Struct
 /* NO ERROR CHECKING*/
 void network_activate      (neural_net       *network);
 
-/* Set the weight of an individual neuron */
+/* Add the values of the deltaw array to the weight array of a single neuron */
 /* NO ERROR CHECKING */
 void network_delta         (neural_net       *network,
                             int              layer_pointer,
                             int              neuron_pointer,
                             double           *deltaw);
 
+/*Set the weights of a neuron in the network equal to the deltaw array */
+/* NO ERROR CHECKING */
+void network_init		   (neural_net		 *network,
+							int				 layer_pointer,
+							int				 neuron_pointer,
+							double			 *deltaw);
 
+/**/
 #endif
 
