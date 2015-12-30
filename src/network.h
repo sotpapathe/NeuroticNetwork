@@ -40,7 +40,7 @@ This file is part of NeuroticNetwork.
 struct neural_net{                                 //Network Struct
         int                 num_of_inputs;             //Number of inputs of structure
         int                 num_of_layers;             //Number of layers in the neural network
-        int                 sum_of_neurons;            //Sum of neurons in network (Inputs are treates as neurons)
+        int                 sum_of_neurons;            //Sum of neurons in network (Inputs are treated as neurons)
         int                 *neurons_per_layer;        //Table of neurons per layer
         neuron              *neuron_table;             //Table of network interconnects (1 dimensional)
 };
