@@ -238,7 +238,12 @@ void errorback               (struct neural_net       *network,
     deltaweights = malloc(maxim*sizeof(double));
     for (neuron_counter = network->num_of_inputs; neuron_counter < network->sum_of_neurons; neuron_counter++) {
         for (temporary_neuron_counter = 0; temporary_neuron_counter < network->neuron_table[neuron_counter].num_inputs; temporary_neuron_counter++) {
-            deltaweights[temporary_neuron_counter] =(-1)* delta[neuron_counter] * (network->neuron_table[neuron_counter].inputs[temporary_neuron_counter].output);
+            if (network->neuron_table[neuron_counter].weights[temporary_neuron_counter] != 0){
+                deltaweights[temporary_neuron_counter] = (-1)* delta[neuron_counter] * (network->neuron_table[neuron_counter].inputs[temporary_neuron_counter].output);
+            }
+            else {
+                deltaweights[temporary_neuron_counter] = 0;
+            }
         }
         neuron_deltaw(&(network->neuron_table[neuron_counter]), deltaweights);
     }
