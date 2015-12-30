@@ -19,7 +19,8 @@ along with NeuroticNetwork.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "neuron.h"
 #include "network.h"
-
+#include <stdlib.h>
+#include <stdio.h>
 
 /*
 ===========================================================================
@@ -43,21 +44,20 @@ int create_network               (int               num_of_inputs,
     
     
     //Memory allocation of network
-    network = malloc(sizeof(struct neural_net);
-    if (network == nullptr) {//Check if memory was available to allocate
+    network = malloc(sizeof(struct neural_net));
+    if (network == NULL) {//Check if memory was available to allocate
         printf("\n---NOT ENOUGH MEMORY FOR NETWORK CREATION---\n");
         return _CREATION_MEMORY_ERROR;
     }
     network->num_of_inputs      = num_of_inputs;
     network->num_of_layers      = num_of_layers;
     network->neurons_per_layer  = neurons_per_layer;
-    network->input_vector       = nullptr;
     for (neuron_counter = 0; neuron_counter < num_of_layers; neuron_counter++) {
-        sum_of_neurons += *neurons_per_layer[neuron_counter];//Calculate the sum of neurons to allocate the required memory
+        sum_of_neurons += neurons_per_layer[neuron_counter];//Calculate the sum of neurons to allocate the required memory
     }
     sum_of_neurons              += num_of_inputs;
     neuron_table_address        = malloc(sum_of_neurons*sizeof(neuron));
-    if (neuron_table_address == nullptr) {//Check if memory was available to allocate
+    if (neuron_table_address == NULL) {//Check if memory was available to allocate
         printf("\n---NOT ENOUGH MEMORY FOR NETWORK CREATION---\n");
         free(network);//Deallocate any allocated memory
         return _CREATION_MEMORY_ERROR;
@@ -83,15 +83,16 @@ int create_network               (int               num_of_inputs,
         }
         network->neuron_table[neuron_counter].num_inputs = current_num_of_inputs;
         weights_of_neurons = malloc(current_num_of_inputs*sizeof(double));
-        if (weights_of_neurons == nullptr) {//Check if memory was available to allocate
+        if (weights_of_neurons == NULL) {//Check if memory was available to allocate
             printf("\n---NOT ENOUGH MEMORY FOR NETWORK CREATION---\n");
             //Delete each neuron
-            for (neuron_counter = network->sum_of_neurons - 1; neuron_counter >= 0; neuron_counter--) {
+            for (neuron_counter = neuron_counter; neuron_counter >= 0; neuron_counter--) {
                 neuron_free(&(network->neuron_table[neuron_counter]));
                 free(&(network->neuron_table[neuron_counter]));
             }
             free(network);//Deallocate any allocated memory
             return _CREATION_MEMORY_ERROR;
+        }
         for (weight_counter = 0; weight_counter < current_num_of_inputs; weight_counter++) {
             weights_of_neurons[weight_counter] = 0.5;
         }
@@ -141,7 +142,7 @@ void network_delta         (struct neural_net       *network,
 
     //Neuron search
     while (local_layer_pointer < layer_pointer) {
-        diference += 1;
+        difference += 1;
         local_neuron_pointer += 1;
         if (difference == network->neurons_per_layer[local_layer_pointer]) {
             local_layer_pointer += 1;
@@ -149,7 +150,7 @@ void network_delta         (struct neural_net       *network,
     }
 
     local_neuron_pointer += neuron_pointer-1;
-    neuron_deltaw(&(network->neuron_table[local_neuron_pointer]),deltaw)
+    neuron_deltaw(&(network->neuron_table[local_neuron_pointer]), deltaw);
 }
 
 void network_setw          (struct neural_net       *network,
@@ -162,7 +163,7 @@ void network_setw          (struct neural_net       *network,
 
     //Neuron search
     while (local_layer_pointer < layer_pointer) {
-        diference += 1;
+        difference += 1;
         local_neuron_pointer += 1;
         if (difference == network->neurons_per_layer[local_layer_pointer]) {
             local_layer_pointer += 1;
@@ -170,7 +171,7 @@ void network_setw          (struct neural_net       *network,
     }
 
     local_neuron_pointer += neuron_pointer-1;
-    neuron_setw(&(network->neuron_table[local_neuron_pointer]), deltaw)
+    neuron_setw(&(network->neuron_table[local_neuron_pointer]), deltaw);
 }
 
 void network_delete          (struct neural_net       *network){
