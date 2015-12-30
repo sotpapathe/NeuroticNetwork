@@ -16,12 +16,14 @@ This file is part of NeuroticNetwork.
     You should have received a copy of the GNU General Public License
     along with NeuroticNetwork.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+#ifndef _network_h
+#define _network_h
 #define _RETURN_SUCCESS 1
 #define _CREATION_MEMORY_ERROR 2
 #include "neuron.h"
-#ifndef _network_h
-#define _network_h
-
+#include <stdlib.h>
+#include <stdio.h>
 
 
 /* 

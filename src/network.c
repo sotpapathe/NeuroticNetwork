@@ -72,10 +72,10 @@ int create_network               (int               num_of_inputs,
         if (current_layer_neuron > neurons_per_layer[layer_counter]) {//Layer change
             layer_counter += 1;
             current_layer_neuron = 1;
-            input_pointer = &(network->neuron_table[neuron_counter - 1]);
+            input_pointer = &(network->neuron_table[neuron_counter - neurons_per_layer[layer_counter-1]]);
         }
         neuron_init(&(network->neuron_table[neuron_counter]));
-        if (layer_counter == 1) {
+        if (layer_counter == 0) {
             current_num_of_inputs = num_of_inputs;
         }
         else {
@@ -96,6 +96,7 @@ int create_network               (int               num_of_inputs,
         for (weight_counter = 0; weight_counter < current_num_of_inputs; weight_counter++) {
             weights_of_neurons[weight_counter] = 0.5;
         }
+        network->neuron_table[neuron_counter].weights = weights_of_neurons;
         network->neuron_table[neuron_counter].inputs = input_pointer;
     }
     
@@ -127,7 +128,7 @@ void network_activate      (struct neural_net       *network) {
     int neuron_counter;
 
     //Goes through all the neurons from input layer to output and activates them
-    for (neuron_counter = 0; neuron_counter < network->sum_of_neurons; neuron_counter++) {
+    for (neuron_counter = network->num_of_inputs; neuron_counter < network->sum_of_neurons; neuron_counter++) {
         neuron_activate(&(network->neuron_table[neuron_counter]));
     }
 }

@@ -27,13 +27,14 @@ This file is part of NeuroticNetwork.
 ===========================================================================
 */
 
-typedef struct						/* Neuron structure */
+typedef struct neuron_t						/* Neuron structure */
 {
 	int				num_inputs;		/* The number of inputs of the neuron */
-	neuron			*inputs;		/* Pointers to the input neurons */
+	struct neuron_t *inputs;		/* Pointers to the input neurons */
 	double			*weights;		/* The weights of the inputs */
 	double			output;			/* The output of the neuron */
-} neuron;
+};
+typedef struct neuron_t neuron;
 
 
 /*
