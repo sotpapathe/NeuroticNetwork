@@ -195,15 +195,16 @@ void network_delete          (struct neural_net       *network){
 void errorback               (struct neural_net       *network,
                               double                  *intended_output){
     //Variable Declaration
-    double delta[network->sum_of_neurons];
+    double *delta,*deltaweights;
     int maxim,layer_counter = network->num_of_layers - 1, neuron_counter, intended_output_index,next_layer,temporary_neuron_counter,temporary_neuron_layer_pointer,temporary_iterator,weight_pointer;
-    next_layer=network->num_of_layers-1
+    next_layer = network->num_of_layers - 1;
+    delta = malloc(network->sum_of_neurons*sizeof(double));
     intended_output_index = network->neurons_per_layer[network->num_of_layers - 1]-1;
     
 
     //Output layer delta calculation
     for (neuron_counter = network->sum_of_neurons - 1;neuron_counter > ((network->sum_of_neurons - 1) - (network->neurons_per_layer[network->num_of_layers - 1])); neuron_counter--) {
-        delta[neuron_counter]=(network->neuron_table[neuron_counter].output-intended_output[intended_output_index])*(network->neuron_table[neuron_counter].output)*(1- (network->neuron_table[neuron_counter].output))
+        delta[neuron_counter] = (network->neuron_table[neuron_counter].output - intended_output[intended_output_index])*(network->neuron_table[neuron_counter].output)*(1 - (network->neuron_table[neuron_counter].output));
     }
 
 
@@ -237,7 +238,7 @@ void errorback               (struct neural_net       *network,
     deltaweights = malloc(maxim*sizeof(double));
     for (neuron_counter = network->num_of_inputs; neuron_counter < network->sum_of_neurons; neuron_counter++) {
         for (temporary_neuron_counter = 0; temporary_neuron_counter < network->neuron_table[neuron_counter].num_inputs; temporary_neuron_counter++) {
-            deltaweights[temporary_neuron_counter] = delta[neuron_counter] * network->neuron_table[neuron_counter].inputs[temporary_neuron_counter];
+            deltaweights[temporary_neuron_counter] =(-1)* delta[neuron_counter] * (network->neuron_table[neuron_counter].inputs[temporary_neuron_counter].output);
         }
         neuron_deltaw(&(network->neuron_table[neuron_counter]), deltaweights);
     }
