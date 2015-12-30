@@ -90,5 +90,9 @@ void network_setw          (struct neural_net       *network,
 void network_delete          (struct neural_net       *network);
 
 
+/*Error back propagation*/
+/*NO ERROR CHECKING*/
+void errorback               (struct neural_net       *network,
+                              double                  *intended_output);
 #endif
 

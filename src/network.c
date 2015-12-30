@@ -147,6 +147,7 @@ void network_delta         (struct neural_net       *network,
         local_neuron_pointer += 1;
         if (difference == network->neurons_per_layer[local_layer_pointer]) {
             local_layer_pointer += 1;
+            difference = 0;
         }
     }
 
@@ -168,6 +169,7 @@ void network_setw          (struct neural_net       *network,
         local_neuron_pointer += 1;
         if (difference == network->neurons_per_layer[local_layer_pointer]) {
             local_layer_pointer += 1;
+            difference = 0;
         }
     }
 
@@ -187,4 +189,56 @@ void network_delete          (struct neural_net       *network){
 
     //Delete network struct
     free(network);
+}
+
+
+void errorback               (struct neural_net       *network,
+                              double                  *intended_output){
+    //Variable Declaration
+    double delta[network->sum_of_neurons];
+    int maxim,layer_counter = network->num_of_layers - 1, neuron_counter, intended_output_index,next_layer,temporary_neuron_counter,temporary_neuron_layer_pointer,temporary_iterator,weight_pointer;
+    next_layer=network->num_of_layers-1
+    intended_output_index = network->neurons_per_layer[network->num_of_layers - 1]-1;
+    
+
+    //Output layer delta calculation
+    for (neuron_counter = network->sum_of_neurons - 1;neuron_counter > ((network->sum_of_neurons - 1) - (network->neurons_per_layer[network->num_of_layers - 1])); neuron_counter--) {
+        delta[neuron_counter]=(network->neuron_table[neuron_counter].output-intended_output[intended_output_index])*(network->neuron_table[neuron_counter].output)*(1- (network->neuron_table[neuron_counter].output))
+    }
+
+
+
+    temporary_neuron_layer_pointer = neuron_counter + 1;
+    weight_pointer = network->neurons_per_layer[next_layer-1]-1;
+    //Inner layer delta calculation
+    for (neuron_counter = neuron_counter; neuron_counter > network->num_of_inputs; neuron_counter--) {
+        temporary_iterator = 1;
+        delta[neuron_counter] = 0;
+        for (temporary_neuron_counter = temporary_neuron_layer_pointer; temporary_iterator < network->neurons_per_layer[next_layer];temporary_neuron_counter++) {
+            delta[neuron_counter] += delta[temporary_neuron_counter] * (network->neuron_table[temporary_neuron_counter].weights[weight_pointer]);
+            temporary_iterator++;
+        }
+        delta[neuron_counter] *= (network->neuron_table[neuron_counter].output)*(1 - (network->neuron_table[neuron_counter].output));
+        weight_pointer--;
+        if (temporary_neuron_layer_pointer - (neuron_counter) == network->neurons_per_layer[next_layer - 1]) {
+            temporary_neuron_layer_pointer = neuron_counter;
+            next_layer--;
+            weight_pointer = network->neurons_per_layer[next_layer - 1] - 1;
+        }
+    }
+
+
+    //Calculation of deltaweights
+    maxim = network->neurons_per_layer[0];
+    for (temporary_iterator = 1; temporary_iterator < network->num_of_layers - 1; temporary_iterator++) {
+        maxim = max(maxim, network->neurons_per_layer[temporary_iterator]);
+    }
+    maxim = max(maxim, network->num_of_inputs);
+    deltaweights = malloc(maxim*sizeof(double));
+    for (neuron_counter = network->num_of_inputs; neuron_counter < network->sum_of_neurons; neuron_counter++) {
+        for (temporary_neuron_counter = 0; temporary_neuron_counter < network->neuron_table[neuron_counter].num_inputs; temporary_neuron_counter++) {
+            deltaweights[temporary_neuron_counter] = delta[neuron_counter] * network->neuron_table[neuron_counter].inputs[temporary_neuron_counter];
+        }
+        neuron_deltaw(&(network->neuron_table[neuron_counter]), deltaweights);
+    }
 }
