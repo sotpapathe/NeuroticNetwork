@@ -83,6 +83,15 @@ int create_network               (int               num_of_inputs,
         }
         network->neuron_table[neuron_counter].num_inputs = current_num_of_inputs;
         weights_of_neurons = malloc(current_num_of_inputs*sizeof(double));
+        if (weights_of_neurons == nullptr) {//Check if memory was available to allocate
+            printf("\n---NOT ENOUGH MEMORY FOR NETWORK CREATION---\n");
+            //Delete each neuron
+            for (neuron_counter = network->sum_of_neurons - 1; neuron_counter >= 0; neuron_counter--) {
+                neuron_free(&(network->neuron_table[neuron_counter]));
+                free(&(network->neuron_table[neuron_counter]));
+            }
+            free(network);//Deallocate any allocated memory
+            return _CREATION_MEMORY_ERROR;
         for (weight_counter = 0; weight_counter < current_num_of_inputs; weight_counter++) {
             weights_of_neurons[weight_counter] = 0.5;
         }
