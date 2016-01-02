@@ -94,5 +94,9 @@ void network_delete          (struct neural_net       *network);
 /*NO ERROR CHECKING*/
 void errorback               (struct neural_net       *network,
                               double                  *intended_output);
+
+void normalize_weights       (struct neural_net       *network);
+
+void print_weights           (struct neural_net       *network);
 #endif
 

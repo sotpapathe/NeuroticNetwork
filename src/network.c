@@ -21,7 +21,8 @@ along with NeuroticNetwork.  If not, see <http://www.gnu.org/licenses/>.
 #include "network.h"
 #include <stdlib.h>
 #include <stdio.h>
-
+#include <math.h>
+#include <time.h>
 /*
 ===========================================================================
 Public Function Declarations
@@ -64,7 +65,7 @@ int create_network               (int               num_of_inputs,
     }
     network->neuron_table       = neuron_table_address;
     network->sum_of_neurons     = sum_of_neurons;
-
+    srand(time(NULL));
     //Network Setup
     input_pointer = network->neuron_table;
     for (neuron_counter = num_of_inputs; neuron_counter < sum_of_neurons; neuron_counter++) {
@@ -94,7 +95,7 @@ int create_network               (int               num_of_inputs,
             return _CREATION_MEMORY_ERROR;
         }
         for (weight_counter = 0; weight_counter < current_num_of_inputs; weight_counter++) {
-            weights_of_neurons[weight_counter] = 0.5;
+            weights_of_neurons[weight_counter] = (double)rand() / (double)RAND_MAX;
         }
         network->neuron_table[neuron_counter].weights = weights_of_neurons;
         network->neuron_table[neuron_counter].inputs = input_pointer;
@@ -173,7 +174,7 @@ void network_setw          (struct neural_net       *network,
         }
     }
 
-    local_neuron_pointer += neuron_pointer-1;
+    local_neuron_pointer += neuron_pointer;
     neuron_setw(&(network->neuron_table[local_neuron_pointer]), deltaw);
 }
 
@@ -184,9 +185,8 @@ void network_delete          (struct neural_net       *network){
     //Delete each neuron
     for (neuron_counter = network->sum_of_neurons - 1; neuron_counter >= 0; neuron_counter--) {
         neuron_free(&(network->neuron_table[neuron_counter]));
-        free(&(network->neuron_table[neuron_counter]));
     }
-
+    free(network->neuron_table);
     //Delete network struct
     free(network);
 }
@@ -195,7 +195,7 @@ void network_delete          (struct neural_net       *network){
 void errorback               (struct neural_net       *network,
                               double                  *intended_output){
     //Variable Declaration
-    double *delta,*deltaweights;
+    double *delta,*deltaweights,check;
     int maxim,layer_counter = network->num_of_layers - 1, neuron_counter, intended_output_index,next_layer,temporary_neuron_counter,temporary_neuron_layer_pointer,temporary_iterator,weight_pointer;
     next_layer = network->num_of_layers - 1;
     delta = malloc(network->sum_of_neurons*sizeof(double));
@@ -205,6 +205,7 @@ void errorback               (struct neural_net       *network,
     //Output layer delta calculation
     for (neuron_counter = network->sum_of_neurons - 1;neuron_counter > ((network->sum_of_neurons - 1) - (network->neurons_per_layer[network->num_of_layers - 1])); neuron_counter--) {
         delta[neuron_counter] = (network->neuron_table[neuron_counter].output - intended_output[intended_output_index])*(network->neuron_table[neuron_counter].output)*(1 - (network->neuron_table[neuron_counter].output));
+        intended_output_index--;
     }
 
 
@@ -212,8 +213,8 @@ void errorback               (struct neural_net       *network,
     temporary_neuron_layer_pointer = neuron_counter + 1;
     weight_pointer = network->neurons_per_layer[next_layer-1]-1;
     //Inner layer delta calculation
-    for (neuron_counter = neuron_counter; neuron_counter > network->num_of_inputs; neuron_counter--) {
-        temporary_iterator = 1;
+    for (neuron_counter = neuron_counter; neuron_counter > network->num_of_inputs-1; neuron_counter--) {
+        temporary_iterator = 0;
         delta[neuron_counter] = 0;
         for (temporary_neuron_counter = temporary_neuron_layer_pointer; temporary_iterator < network->neurons_per_layer[next_layer];temporary_neuron_counter++) {
             delta[neuron_counter] += delta[temporary_neuron_counter] * (network->neuron_table[temporary_neuron_counter].weights[weight_pointer]);
@@ -238,13 +239,41 @@ void errorback               (struct neural_net       *network,
     deltaweights = malloc(maxim*sizeof(double));
     for (neuron_counter = network->num_of_inputs; neuron_counter < network->sum_of_neurons; neuron_counter++) {
         for (temporary_neuron_counter = 0; temporary_neuron_counter < network->neuron_table[neuron_counter].num_inputs; temporary_neuron_counter++) {
-            if (network->neuron_table[neuron_counter].weights[temporary_neuron_counter] != 0){
-                deltaweights[temporary_neuron_counter] = (-1)* delta[neuron_counter] * (network->neuron_table[neuron_counter].inputs[temporary_neuron_counter].output);
+            check = fabs(network->neuron_table[neuron_counter].weights[temporary_neuron_counter]);
+            if (check == check){
+                deltaweights[temporary_neuron_counter] = (-0.2)* delta[neuron_counter] * (network->neuron_table[neuron_counter].inputs[temporary_neuron_counter].output);
             }
             else {
                 deltaweights[temporary_neuron_counter] = 0;
             }
         }
         neuron_deltaw(&(network->neuron_table[neuron_counter]), deltaweights);
+    }
+    //normalize_weights(network);
+    free(deltaweights);
+    free(delta);
+}
+
+void normalize_weights(struct neural_net       *network) {
+    int neuron_counter,inner_neuron_counter;
+    double total;
+    for (neuron_counter = network->num_of_inputs; neuron_counter < network->sum_of_neurons; neuron_counter++) {
+        total = 0;
+        for (inner_neuron_counter = 0; inner_neuron_counter < network->neuron_table[neuron_counter].num_inputs; inner_neuron_counter++) {
+            total += fabs(network->neuron_table[neuron_counter].weights[inner_neuron_counter]);
+        }
+        for (inner_neuron_counter = 0; inner_neuron_counter < network->neuron_table[neuron_counter].num_inputs; inner_neuron_counter++) {
+            network->neuron_table[neuron_counter].weights[inner_neuron_counter] = network->neuron_table[neuron_counter].weights[inner_neuron_counter] / total;
+        }
+    }
+}
+
+void print_weights(struct neural_net       *network) {
+    int neuron_counter, inner_neuron_counter;
+    system("cls");
+    for (neuron_counter = network->num_of_inputs; neuron_counter < network->sum_of_neurons; neuron_counter++) {
+        for (inner_neuron_counter = 0; inner_neuron_counter < network->neuron_table[neuron_counter].num_inputs; inner_neuron_counter++) {
+            printf("neuron: %d, weight:%d = %lf\n", neuron_counter, inner_neuron_counter, network->neuron_table[neuron_counter].weights[inner_neuron_counter]);
+        }
     }
 }
