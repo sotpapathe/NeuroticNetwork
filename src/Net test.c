@@ -28,11 +28,11 @@ int main() {
     intendedout[0] = 0;
     intendedout[1] = 1;
     printf("%lf\t%lf\t%lf\n", input[count * 3], input[count * 3 + 1], input[count * 3 + 2]);
-    for (count = 1;count < 8;count++) {//PROBLIMA STIS EISODOUS
+    for (count = 1;count < 8;count++) {
         input[count*3] = count % 2;
         input[count * 3 + 1] = input[count * 3 - 2];
         input[count * 3 + 2] = input[count * 3 - 1];
-        if (input[count * 3] == 0) {//DEN ORIZETAI PANTA
+        if (input[count * 3] == 0) {
             input[count * 3 + 1] = ((int)input[count * 3 - 2] + 1) % 2;
             if (input[count * 3 + 1] == 0) {
                 input[count * 3 + 2] = ((int)input[count * 3 - 1] + 1) % 2;
