@@ -40,6 +40,7 @@ This file is part of NeuroticNetwork.
 */
 
 struct neural_net{                                 //Network Struct
+        double              noise_margin;               //Noise margin of outputs, can be set at any number, default is 0.08
         int                 num_of_inputs;             //Number of inputs of structure
         int                 num_of_layers;             //Number of layers in the neural network
         int                 sum_of_neurons;            //Sum of neurons in network (Inputs are treated as neurons)
@@ -98,5 +99,15 @@ void errorback               (struct neural_net       *network,
 void normalize_weights       (struct neural_net       *network);
 
 void print_weights           (struct neural_net       *network);
-#endif
 
+void network_learn           (struct neural_net       *network,
+                              double                  *input,
+                              double                  *intended_output,
+                              int                     number_of_iterations);
+
+int network_test             (struct neural_net      *network,
+                               double                 *test_input,
+                               double                 *intended_output,
+                               int                    number_of_tests);
+
+#endif

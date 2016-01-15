@@ -33,8 +33,8 @@ typedef struct neuron_t						/* Neuron structure */
 	struct neuron_t *inputs;		/* Pointers to the input neurons */
 	double			*weights;		/* The weights of the inputs */
 	double			output;			/* The output of the neuron */
-};
-typedef struct neuron_t neuron;
+}neuron;
+
 
 
 /*

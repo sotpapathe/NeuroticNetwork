@@ -40,7 +40,8 @@ int create_network               (int               num_of_inputs,
     //Variable Declaration
     struct neural_net *network;
     neuron *neuron_table_address,*input_pointer;
-    int neuron_counter,sum_of_neurons=0,current_layer_neuron=0,layer_counter=0,weight_counter,current_num_of_inputs;
+    int neuron_counter, sum_of_neurons = 0, current_layer_neuron = 0, layer_counter = 0, weight_counter;
+    unsigned int current_num_of_inputs;
     double *weights_of_neurons;
     
     
@@ -50,6 +51,7 @@ int create_network               (int               num_of_inputs,
         printf("\n---NOT ENOUGH MEMORY FOR NETWORK CREATION---\n");
         return _CREATION_MEMORY_ERROR;
     }
+    network->noise_margin       = 0.08;
     network->num_of_inputs      = num_of_inputs;
     network->num_of_layers      = num_of_layers;
     network->neurons_per_layer  = neurons_per_layer;
@@ -83,7 +85,7 @@ int create_network               (int               num_of_inputs,
             current_num_of_inputs = neurons_per_layer[layer_counter - 1];
         }
         network->neuron_table[neuron_counter].num_inputs = current_num_of_inputs;
-        weights_of_neurons = malloc(current_num_of_inputs*sizeof(double));
+        weights_of_neurons = malloc((unsigned int)current_num_of_inputs*sizeof(double));
         if (weights_of_neurons == NULL) {//Check if memory was available to allocate
             printf("\n---NOT ENOUGH MEMORY FOR NETWORK CREATION---\n");
             //Delete each neuron
@@ -205,6 +207,7 @@ void errorback               (struct neural_net       *network,
     //Output layer delta calculation
     for (neuron_counter = network->sum_of_neurons - 1;neuron_counter > ((network->sum_of_neurons - 1) - (network->neurons_per_layer[network->num_of_layers - 1])); neuron_counter--) {
         delta[neuron_counter] = (network->neuron_table[neuron_counter].output - intended_output[intended_output_index])*(network->neuron_table[neuron_counter].output)*(1 - (network->neuron_table[neuron_counter].output));
+        //printf("%lf", intended_output[intended_output_index]);
         intended_output_index--;
     }
 
@@ -249,7 +252,6 @@ void errorback               (struct neural_net       *network,
         }
         neuron_deltaw(&(network->neuron_table[neuron_counter]), deltaweights);
     }
-    //normalize_weights(network);
     free(deltaweights);
     free(delta);
 }
@@ -276,4 +278,35 @@ void print_weights(struct neural_net       *network) {
             printf("neuron: %d, weight:%d = %lf\n", neuron_counter, inner_neuron_counter, network->neuron_table[neuron_counter].weights[inner_neuron_counter]);
         }
     }
+}
+
+void network_learn           (struct neural_net       *network,
+                              double                  *input,
+                              double                  *intended_output,
+                              int                     number_of_iterations){
+    int iteration_counter;
+    for (iteration_counter = 0; iteration_counter < number_of_iterations; iteration_counter++) {
+        change_input(&(input[iteration_counter*network->num_of_inputs]), network);
+        network_activate(network);
+        errorback(network, &(intended_output[iteration_counter*(network->neurons_per_layer[network->num_of_layers - 1])]));
+    }
+}
+
+int network_test             (struct neural_net      *network,
+                               double                 *test_input,
+                               double                 *intended_output,
+                               int                    number_of_tests){
+    int iteration_counter,neuron_counter,output_counter,return_value=EXIT_SUCCESS;
+    for (iteration_counter = 0; iteration_counter < number_of_tests; iteration_counter++) {
+        change_input(&(test_input[iteration_counter*network->num_of_inputs]), network);
+        network_activate(network);
+        output_counter = 1;
+        for (neuron_counter = network->sum_of_neurons - 1; neuron_counter > ((network->sum_of_neurons - 1) - (network->neurons_per_layer[network->num_of_layers - 1])); neuron_counter--) {
+            if (fabs(network->neuron_table[neuron_counter].output - intended_output[(iteration_counter+1)*network->neurons_per_layer[network->num_of_layers - 1] - output_counter])>network->noise_margin) {
+                return_value += 1;
+            }
+                output_counter++;
+        }
+    }
+    return return_value;
 }
