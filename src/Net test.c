@@ -10,7 +10,7 @@ int main() {
     double *input,*intendedout;
     struct neural_net *net;
     npl[0] = 3;
-    npl[1] = 4;
+    npl[1] = 3;
     npl[2] = 2;
     ret = create_network(3, 3, npl, &net);
     if (ret == _CREATION_MEMORY_ERROR) {
@@ -43,12 +43,16 @@ int main() {
         intendedout[count * 2 + 1] = ((int)intendedout[count*2] + 1) % 2;
         printf("%lf\t%lf\n", intendedout[count * 2], intendedout[count * 2 + 1]);
     }
+    network_print(net);
     printf("Beginning learning process\n");
+    network_print(net);
+    count = 0;
     while (network_test(net, input, intendedout, 8)) {
         network_learn(net, input, intendedout, 8);
         count++;
-        if (count % 100000 == 0) {
-            printf("STILL LEARNING\n");
+        if (count % 100 == 0) {
+            count = 0;
+            print_weights(net);
         }
     }
     printf("Function returned %d\n Press any key", ret);

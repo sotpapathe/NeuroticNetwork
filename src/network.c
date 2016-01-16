@@ -51,6 +51,14 @@ int create_network               (int               num_of_inputs,
         printf("\n---NOT ENOUGH MEMORY FOR NETWORK CREATION---\n");
         return _CREATION_MEMORY_ERROR;
     }
+    network->message            = malloc(50*sizeof(char));
+    if (network->message == NULL) {//Check if memory was available to allocate
+        printf("\n---NOT ENOUGH MEMORY FOR NETWORK CREATION---\n");
+        free(network);//Deallocate any allocated memory
+        return _CREATION_MEMORY_ERROR;
+    }
+    network->message            = "\0";
+    network->learning_counter   = 0;
     network->noise_margin       = 0.08;
     network->num_of_inputs      = num_of_inputs;
     network->num_of_layers      = num_of_layers;
@@ -244,7 +252,7 @@ void errorback               (struct neural_net       *network,
         for (temporary_neuron_counter = 0; temporary_neuron_counter < network->neuron_table[neuron_counter].num_inputs; temporary_neuron_counter++) {
             check = fabs(network->neuron_table[neuron_counter].weights[temporary_neuron_counter]);
             if (check == check){
-                deltaweights[temporary_neuron_counter] = (-0.2)* delta[neuron_counter] * (network->neuron_table[neuron_counter].inputs[temporary_neuron_counter].output);
+                deltaweights[temporary_neuron_counter] = (network->learning_coefficient)* delta[neuron_counter] * (network->neuron_table[neuron_counter].inputs[temporary_neuron_counter].output);
             }
             else {
                 deltaweights[temporary_neuron_counter] = 0;
@@ -290,6 +298,12 @@ void network_learn           (struct neural_net       *network,
         network_activate(network);
         errorback(network, &(intended_output[iteration_counter*(network->neurons_per_layer[network->num_of_layers - 1])]));
     }
+    network->learning_counter++;
+    if (network->learning_counter == 10000) {
+        network->learning_counter = 0;
+        network_set_message(network,1000);
+        network_print(network);
+    }
 }
 
 int network_test             (struct neural_net      *network,
@@ -309,4 +323,20 @@ int network_test             (struct neural_net      *network,
         }
     }
     return return_value;
+}
+
+
+void network_set_message(struct neural_net *network, int message) {
+    if (message == 1000) {
+        network->message = "Still Learning\n";
+    }
+}
+
+void network_print(struct neural_net *network) {
+    printf("%s",network->message);//To be changed probably
+    network->message = "\0";
+}
+
+void network_change_learning_coeff(struct neural_net *network,double new_learning_coefficient) {
+    network->learning_coefficient = new_learning_coefficient;
 }
