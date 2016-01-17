@@ -10,7 +10,7 @@ int main() {
     double *input,*intendedout;
     struct neural_net *net;
     npl[0] = 3;
-    npl[1] = 3;
+    npl[1] = 5;
     npl[2] = 2;
     ret = create_network(3, 3, npl, &net);
     if (ret == _CREATION_MEMORY_ERROR) {
@@ -50,9 +50,10 @@ int main() {
     while (network_test(net, input, intendedout, 8)) {
         network_learn(net, input, intendedout, 8);
         count++;
-        if (count % 100 == 0) {
+        if (count % 10000 == 0) {
             count = 0;
             print_weights(net);
+            printf("%d", network_test(net, input, intendedout, 8));
         }
     }
     printf("Function returned %d\n Press any key", ret);
@@ -65,11 +66,7 @@ int main() {
         scanf_s("%lf", &input[2]);
         change_input(input, net);
         network_activate(net);
-        printf("\nPRINTING OUTPUTS\n");
-        for (neuroncounter = net->num_of_inputs; neuroncounter < net->sum_of_neurons; neuroncounter++) {
-            input[0] = net->neuron_table[neuroncounter].output;
-            printf("%lf\n", input[0]);
-        }
+        network_print_whole_out(net);
         printf("Enter first input\n 380 is the exit number\n");
         scanf_s("%lf", input);
     }

@@ -58,6 +58,9 @@ int create_network               (int               num_of_inputs,
         return _CREATION_MEMORY_ERROR;
     }
     network->message            = "\0";
+    network->last_learning_ret  = 0;
+    network->learn_change_counter = 0;
+    network->learning_coefficient = 0.5;
     network->learning_counter   = 0;
     network->noise_margin       = 0.08;
     network->num_of_inputs      = num_of_inputs;
@@ -252,7 +255,7 @@ void errorback               (struct neural_net       *network,
         for (temporary_neuron_counter = 0; temporary_neuron_counter < network->neuron_table[neuron_counter].num_inputs; temporary_neuron_counter++) {
             check = fabs(network->neuron_table[neuron_counter].weights[temporary_neuron_counter]);
             if (check == check){
-                deltaweights[temporary_neuron_counter] = (network->learning_coefficient)* delta[neuron_counter] * (network->neuron_table[neuron_counter].inputs[temporary_neuron_counter].output);
+                deltaweights[temporary_neuron_counter] = (-1.0)*(network->learning_coefficient)* delta[neuron_counter] * (network->neuron_table[neuron_counter].inputs[temporary_neuron_counter].output);
             }
             else {
                 deltaweights[temporary_neuron_counter] = 0;
@@ -280,7 +283,6 @@ void normalize_weights(struct neural_net       *network) {
 
 void print_weights(struct neural_net       *network) {
     int neuron_counter, inner_neuron_counter;
-    system("cls");
     for (neuron_counter = network->num_of_inputs; neuron_counter < network->sum_of_neurons; neuron_counter++) {
         for (inner_neuron_counter = 0; inner_neuron_counter < network->neuron_table[neuron_counter].num_inputs; inner_neuron_counter++) {
             printf("neuron: %d, weight:%d = %lf\n", neuron_counter, inner_neuron_counter, network->neuron_table[neuron_counter].weights[inner_neuron_counter]);
@@ -306,7 +308,7 @@ void network_learn           (struct neural_net       *network,
     }
 }
 
-int network_test             (struct neural_net      *network,
+int network_test              (struct neural_net      *network,
                                double                 *test_input,
                                double                 *intended_output,
                                int                    number_of_tests){
@@ -322,6 +324,8 @@ int network_test             (struct neural_net      *network,
                 output_counter++;
         }
     }
+    adapt_learning_coeff(network, return_value);
+    network->last_learning_ret = return_value;
     return return_value;
 }
 
@@ -337,6 +341,39 @@ void network_print(struct neural_net *network) {
     network->message = "\0";
 }
 
+void network_print_whole_out(struct neural_net *network) {
+    int neuron_counter;
+    printf("\tPRINTING OUTPUT\n");
+    for (neuron_counter = network->num_of_inputs; neuron_counter < network->sum_of_neurons; neuron_counter++) {
+        printf("Neuron %d output is: %lf\n", neuron_counter- network->num_of_inputs, network->neuron_table[neuron_counter].output);
+    }
+}
+
 void network_change_learning_coeff(struct neural_net *network,double new_learning_coefficient) {
     network->learning_coefficient = new_learning_coefficient;
+}
+
+void adapt_learning_coeff       (struct neural_net *network,
+                                 int current_ret) {
+    if (network->last_learning_ret == 0) {
+        network->learn_change_counter = 0;
+        network->learning_coefficient = 0.2;
+    }
+    else {
+        if (network->last_learning_ret == current_ret) {
+            network->learn_change_counter += 1;
+        }
+        else {
+            if (network->last_learning_ret > current_ret) {
+                network->learn_change_counter = 0;
+                network->learning_coefficient = 0.1;
+            }
+            else {
+                network->learn_change_counter += 100;
+            }
+        }
+        if (network->learn_change_counter > 50000) {
+            network->learning_coefficient += 0.0002;
+        }
+    }
 }
