@@ -349,7 +349,15 @@ void network_print_whole_out(struct neural_net *network) {
     }
 }
 
-void network_change_learning_coeff(struct neural_net *network,double new_learning_coefficient) {
+void network_print_output_only(struct neural_net *network) {
+    int neuron_counter,output_neuron=1;
+    for (neuron_counter = network->sum_of_neurons - (network->neurons_per_layer[network->num_of_layers - 1]); neuron_counter < network->sum_of_neurons; neuron_counter++) {
+        printf("Output of the %d output neuron is :%lf\n", output_neuron, network->neuron_table[neuron_counter].output);
+        output_neuron++;
+    }
+}
+
+void network_change_learning_coeff(struct neural_net *network, double new_learning_coefficient) {
     network->learning_coefficient = new_learning_coefficient;
 }
 
@@ -373,7 +381,7 @@ void adapt_learning_coeff       (struct neural_net *network,
             }
         }
         if (network->learn_change_counter > 50000) {
-            network->learning_coefficient += 0.0002;
+            network->learning_coefficient += 0.000;
         }
     }
 }

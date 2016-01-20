@@ -136,6 +136,9 @@ void network_print                (struct neural_net      *network);
 //Prints the outputs of all the neurons
 void network_print_whole_out      (struct neural_net      *network);
 
+//Prints the networks output
+void network_print_output_only    (struct neural_net      *network);
+
 //Change the learning coefficient ofthe error back propagation method of learning
 void network_change_learning_coeff(struct neural_net *network, 
                                    double new_learning_coefficient);

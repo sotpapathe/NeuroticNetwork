@@ -66,7 +66,8 @@ int main() {
         scanf_s("%lf", &input[2]);
         change_input(input, net);
         network_activate(net);
-        network_print_whole_out(net);
+        //network_print_whole_out(net);
+        network_print_output_only(net);
         printf("Enter first input\n 380 is the exit number\n");
         scanf_s("%lf", input);
     }
