@@ -62,7 +62,7 @@ int create_network               (int               num_of_inputs,
     network->learn_change_counter = 0;
     network->learning_coefficient = 0.5;
     network->learning_counter   = 0;
-    network->noise_margin       = 0.08;
+    network->noise_margin       = 0.03;
     network->num_of_inputs      = num_of_inputs;
     network->num_of_layers      = num_of_layers;
     network->neurons_per_layer  = neurons_per_layer;
@@ -78,7 +78,7 @@ int create_network               (int               num_of_inputs,
     }
     network->neuron_table       = neuron_table_address;
     network->sum_of_neurons     = sum_of_neurons;
-    srand(time(NULL));
+    srand((int)time(NULL));
     //Network Setup
     input_pointer = network->neuron_table;
     for (neuron_counter = num_of_inputs; neuron_counter < sum_of_neurons; neuron_counter++) {

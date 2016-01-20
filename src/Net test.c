@@ -9,8 +9,8 @@ int main() {
     int npl[3],ret=0,retbef=0,count,tempret,neuroncounter;
     double *input,*intendedout;
     struct neural_net *net;
-    npl[0] = 3;
-    npl[1] = 5;
+    npl[0] = 10;
+    npl[1] = 10;
     npl[2] = 2;
     ret = create_network(3, 3, npl, &net);
     if (ret == _CREATION_MEMORY_ERROR) {
@@ -52,7 +52,7 @@ int main() {
         count++;
         if (count % 10000 == 0) {
             count = 0;
-            print_weights(net);
+            network_print_output_only(net);
             printf("%d", network_test(net, input, intendedout, 8));
         }
     }
