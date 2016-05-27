@@ -16,7 +16,7 @@ Contents:
 
 Neurons consist of one integer variable that shows the number of the inputs of the neuron, one array of neuron pointers that point to the neurons that are treated as inputs to the current neuron which is always the size of the number of inputs, one array of double numbers that are the weights of the inputs of the current neuron and one double variable which is the output of the neuron.
 
-2:Neuron methods
+2:Neuron functions
 
 Neurons have the following functions:
 
