@@ -2,6 +2,7 @@
 Neural network simulator by Alexandros Tsonis and Sotiris Papatheodorou
 
 Contents:
+
 1-------------Neuron architecture
 
 2-------------Neuron functions
