@@ -39,8 +39,8 @@ int create_network               (int               num_of_inputs,
                                   struct neural_net **network_addr){
     //Variable Declaration
     struct neural_net *network;
-    neuron *neuron_table_address,*input_pointer;
-    int neuron_counter, sum_of_neurons = 0, current_layer_neuron = 0, layer_counter = 0, weight_counter;
+    neuron *neuron_table_address;
+    int neuron_counter, sum_of_neurons = 0, current_layer_neuron = 0, layer_counter = 0, weight_counter, input_pointer;
     unsigned int current_num_of_inputs;
     double *weights_of_neurons;
     
@@ -60,7 +60,7 @@ int create_network               (int               num_of_inputs,
     network->message            = "\0";
     network->last_learning_ret  = 0;
     network->learn_change_counter = 0;
-    network->learning_coefficient = 0.5;
+    network->learning_coefficient = 0.2;
     network->learning_counter   = 0;
     network->noise_margin       = 0.03;
     network->num_of_inputs      = num_of_inputs;
@@ -80,23 +80,30 @@ int create_network               (int               num_of_inputs,
     network->sum_of_neurons     = sum_of_neurons;
     srand((int)time(NULL));
     //Network Setup
-    input_pointer = network->neuron_table;
+    input_pointer = 0;
+    layer_counter = 0;
     for (neuron_counter = num_of_inputs; neuron_counter < sum_of_neurons; neuron_counter++) {
         current_layer_neuron += 1;
         if (current_layer_neuron > neurons_per_layer[layer_counter]) {//Layer change
             layer_counter += 1;
             current_layer_neuron = 1;
-            input_pointer = &(network->neuron_table[neuron_counter - neurons_per_layer[layer_counter-1]]);
+            input_pointer = neuron_counter - neurons_per_layer[layer_counter-1]-1;
         }
         neuron_init(&(network->neuron_table[neuron_counter]));
-        if (layer_counter == 0) {
-            current_num_of_inputs = num_of_inputs;
+        if (layer_counter == 0)
+        {
+            for (int j = 0; j < network->num_of_inputs; j++){
+                add_input(&(network->neuron_table[neuron_counter]), &(network->neuron_table[input_pointer + j]));
+            }
         }
-        else {
-            current_num_of_inputs = neurons_per_layer[layer_counter - 1];
+        else
+        {
+            for (int j = 0; j < neurons_per_layer[layer_counter - 1]; j++){
+                add_input(&(network->neuron_table[neuron_counter]), &(network->neuron_table[input_pointer + j]));
+            }
         }
-        network->neuron_table[neuron_counter].num_inputs = current_num_of_inputs;
-        weights_of_neurons = malloc((unsigned int)current_num_of_inputs*sizeof(double));
+        current_num_of_inputs = network->neuron_table[neuron_counter].num_inputs;
+        weights_of_neurons = malloc(current_num_of_inputs*sizeof(double));
         if (weights_of_neurons == NULL) {//Check if memory was available to allocate
             printf("\n---NOT ENOUGH MEMORY FOR NETWORK CREATION---\n");
             //Delete each neuron
@@ -111,7 +118,8 @@ int create_network               (int               num_of_inputs,
             weights_of_neurons[weight_counter] = (double)rand() / (double)RAND_MAX;
         }
         network->neuron_table[neuron_counter].weights = weights_of_neurons;
-        network->neuron_table[neuron_counter].inputs = input_pointer;
+        //network->neuron_table[neuron_counter].inputs = input_pointer;
+        
     }
     
     
@@ -255,7 +263,7 @@ void errorback               (struct neural_net       *network,
         for (temporary_neuron_counter = 0; temporary_neuron_counter < network->neuron_table[neuron_counter].num_inputs; temporary_neuron_counter++) {
             check = fabs(network->neuron_table[neuron_counter].weights[temporary_neuron_counter]);
             if (check == check){
-                deltaweights[temporary_neuron_counter] = (-1.0)*(network->learning_coefficient)* delta[neuron_counter] * (network->neuron_table[neuron_counter].inputs[temporary_neuron_counter].output);
+                deltaweights[temporary_neuron_counter] = (-1.0)*(network->learning_coefficient)* delta[neuron_counter] * (network->neuron_table[neuron_counter].inputs[temporary_neuron_counter]->output);
             }
             else {
                 deltaweights[temporary_neuron_counter] = 0;
@@ -381,7 +389,8 @@ void adapt_learning_coeff       (struct neural_net *network,
             }
         }
         if (network->learn_change_counter > 50000) {
-            network->learning_coefficient += 0.000;
+            network->learning_coefficient *= 1.01;
+            network->learn_change_counter = 0;
         }
     }
 }

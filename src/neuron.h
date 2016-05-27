@@ -30,7 +30,7 @@ This file is part of NeuroticNetwork.
 typedef struct neuron_t						/* Neuron structure */
 {
 	int				num_inputs;		/* The number of inputs of the neuron */
-	struct neuron_t *inputs;		/* Pointers to the input neurons */
+	struct neuron_t **inputs;		/* Pointers to the input neurons */
 	double			*weights;		/* The weights of the inputs */
 	double			output;			/* The output of the neuron */
 }neuron;
@@ -66,4 +66,13 @@ void neuron_free	(neuron		*target);
 /* Initialize the target neuron to zeros and NULL pointers */
 /* NO ERROR CHECKING */
 void neuron_init	(neuron		*target);
+
+/* Add to the input neuron list the target neuron*/
+/* NO ERROR CHECKING */
+void add_input      (neuron *source,neuron *target);
+
+/* Remove i-th neuron from list of input neurons*/
+/* num must be from 0 to number of inputs for the current neuron minus one*/
+/* NO ERROR CHECKING*/
+void remove_input(neuron *source, int num);
 #endif

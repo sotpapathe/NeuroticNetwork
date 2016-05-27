@@ -4,18 +4,20 @@
 #include <stdio.h>
 #include "neuron.h"
 #include "network.h"
-
+#ifndef _DEBUG 
+#define _DEBUG 0
+#endif
 int main() {
     int npl[3],ret=0,retbef=0,count,tempret,neuroncounter;
     double *input,*intendedout;
     struct neural_net *net;
-    npl[0] = 10;
-    npl[1] = 10;
+    npl[0] = 5;
+    npl[1] = 4;
     npl[2] = 2;
     ret = create_network(3, 3, npl, &net);
     if (ret == _CREATION_MEMORY_ERROR) {
         return EXIT_FAILURE;
-    }
+    }    
     printf("Function returned %d\n Press any key", ret);
     scanf_s("%d", &ret);
     ret = EXIT_FAILURE;
@@ -52,7 +54,7 @@ int main() {
         count++;
         if (count % 10000 == 0) {
             count = 0;
-            network_print_output_only(net);
+            network_print_whole_out(net);
             printf("%d", network_test(net, input, intendedout, 8));
         }
     }

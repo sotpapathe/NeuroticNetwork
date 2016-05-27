@@ -71,7 +71,7 @@ void neuron_activate	(neuron		*target)
 	/* Loop over all inputs of target neuron */
 	for (i=0; i<target->num_inputs; i++)
 	{
-		x = x + target->weights[i] * target->inputs[i].output;
+		x = x + target->weights[i] * target->inputs[i]->output;
 	}
 	
 	/* Non-linear function */
@@ -109,4 +109,26 @@ void neuron_init	(neuron		*target)
 	/* NULL */
 	target->weights = NULL;
 	target->inputs = NULL;
+}
+
+void add_input(neuron *source, neuron *target)
+{
+    source->num_inputs++;
+    source->inputs = realloc(source->inputs, source->num_inputs*sizeof(struct neuron_t *));
+    source->inputs[source->num_inputs - 1] = target;
+}
+
+void remove_input(neuron *source, int num)
+{
+    int i,j=0;
+    struct neuron_t **temp;
+    temp = malloc((source->num_inputs-1)*sizeof(struct neuron_t *));
+    for (i = 0; i < source->num_inputs; i++)
+    {
+        if (i == num) continue;
+        temp[j] = source->inputs[i];
+        j++;
+    }
+    free(source->inputs);
+    source->inputs = temp;
 }
