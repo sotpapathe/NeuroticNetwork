@@ -20,7 +20,7 @@ This file is part of NeuroticNetwork.
 #include "neuron.h"
 #include <math.h>
 #include <stdlib.h>
-
+#include "essentials.h"
 /*
 ===========================================================================
                        Public Function Declarations
@@ -35,9 +35,12 @@ void neuron_deltaw		(neuron		*target,
 	/* Loop over all weights of target neuron */
 	for (i=0; i<target->num_inputs; i++)
 	{
+		/* Replace last weights */
+		target->lastWeights[i] = target->weights[i];
 		/* Add the delta value to each weight */
 		target->weights[i] = target->weights[i] + deltaw[i];
 	}
+	isStagnated(target);
 }
 
 
@@ -52,9 +55,12 @@ void neuron_setw		(neuron		*target,
 	/* Loop over all weights of target neuron */
 	for (i=0; i<target->num_inputs; i++)
 	{
+		/* Replace last weights */
+		target->lastWeights[i] = target->weights[i];
 		/* Set the value of each weight */
 		target->weights[i] = deltaw[i];
 	}
+	isStagnated(target);
 }
 
 
@@ -108,27 +114,63 @@ void neuron_init	(neuron		*target)
 	
 	/* NULL */
 	target->weights = NULL;
+	target->lastWeights = NULL;
 	target->inputs = NULL;
+	
+	/* FALSE */
+	target->stagnatedWeights=false;
+	target->stagnatedOutput=false;
 }
 
 void add_input(neuron *source, neuron *target)
 {
     source->num_inputs++;
     source->inputs = realloc(source->inputs, source->num_inputs*sizeof(struct neuron_t *));
+	source->weights = realloc(source->weights, source->num_inputs*sizeof(double));
+	source->lastWeights = realloc(source->lastWeights, source->num_inputs*sizeof(double));
     source->inputs[source->num_inputs - 1] = target;
+	source->weights[source->num_inputs - 1] = 0.5;
+	source->lastWeights[source->num_inputs - 1] = 0.5;
 }
 
 void remove_input(neuron *source, int num)
 {
     int i,j=0;
     struct neuron_t **temp;
+	double *tempw,*templw;
     temp = malloc((source->num_inputs-1)*sizeof(struct neuron_t *));
+	tempw = malloc((source->num_inputs-1)*sizeof(double));
+	templw = malloc((source->num_inputs-1)*sizeof(double));
     for (i = 0; i < source->num_inputs; i++)
     {
         if (i == num) continue;
         temp[j] = source->inputs[i];
+		tempw[j] = source->weights[i];
+		templw[j] = source->lastWeights[i];
         j++;
     }
     free(source->inputs);
+	free(source->weights);
+	free(source->lastWeights);
     source->inputs = temp;
+}
+
+void isStagnated(neuron *neuron)
+{
+	int i;
+	bool check = true;
+	for (i=0; i < neuron->num_inputs; i++)
+	{
+		if (fabs(neuron->lastWeights[i]-neuron->weights[i]) > 0.0000001)
+		{
+			check = false;
+		}
+	}
+	neuron->stagnatedWeights = check;
+	check = true;
+	if (fabs(neuron->lastOutput - neuron->output) > 0.000001)
+	{
+		check = false;
+	}
+	neuron->stagnatedOutput = check;
 }
