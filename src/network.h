@@ -21,9 +21,10 @@ This file is part of NeuroticNetwork.
 #define _network_h
 #define _RETURN_SUCCESS 1
 #define _CREATION_MEMORY_ERROR 2
-#include "neuron.h"
 #include <stdlib.h>
 #include <stdio.h>
+
+#include "neuron.h"
 
 
 /* 

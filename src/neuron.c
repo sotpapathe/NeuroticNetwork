@@ -17,9 +17,10 @@ This file is part of NeuroticNetwork.
     along with NeuroticNetwork.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "neuron.h"
 #include <math.h>
 #include <stdlib.h>
+
+#include "neuron.h"
 #include "essentials.h"
 /*
 ===========================================================================
