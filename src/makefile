@@ -25,6 +25,8 @@ PROG = neurotic
 
 # Object files needed
 OBJS = Net_test.o neuron.o network.o essentials.o
+# Source files needed
+SRCS = Net_test.c neuron.c network.c essentials.c
 
 
 # Rules ########################################################################
@@ -38,14 +40,12 @@ debug : $(OBJS)
 clean :
 	rm -f $(OBJS) $(PROG)
 
+# Object file dependencies
+depend:
+	makedepend -- $(CFLAGS) -- $(SRCS)
+
 # Implicit rule for creating object files
 .c.o:
 	$(CC) $(CFLAGS) $(LINK) $(INCLUDE) -c $*.c
-
-# Object file dependencies
-Net_test.o : neuron.h network.h
-neuron.o : neuron.h essentials.h
-network.o : network.h neuron.h
-essentials.o : essentials.h
 
 # End of makefile
