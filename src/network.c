@@ -61,7 +61,7 @@ int create_network               (int               num_of_inputs,
     network->message            = "\0";
     network->last_learning_ret  = 0;
     network->learn_change_counter = 0;
-    network->learning_coefficient = 0.05;
+    network->learning_coefficient = 0.00005;
     network->learning_counter   = 0;
     network->noise_margin       = 0.03;
     network->num_of_inputs      = num_of_inputs;
