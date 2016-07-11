@@ -1,0 +1,5 @@
+============================ v0.1 ============================================
+-Created Changelog
+-Added flags for local extremums in neurons
+-Changed functions for portability
+-Created makefile
