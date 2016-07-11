@@ -23,6 +23,7 @@ along with NeuroticNetwork.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
+#include "essentials.h"
 /*
 ===========================================================================
 Public Function Declarations
@@ -60,7 +61,7 @@ int create_network               (int               num_of_inputs,
     network->message            = "\0";
     network->last_learning_ret  = 0;
     network->learn_change_counter = 0;
-    network->learning_coefficient = 0.2;
+    network->learning_coefficient = 0.05;
     network->learning_counter   = 0;
     network->noise_margin       = 0.03;
     network->num_of_inputs      = num_of_inputs;
@@ -255,9 +256,9 @@ void errorback               (struct neural_net       *network,
     //Calculation of deltaweights
     maxim = network->neurons_per_layer[0];
     for (temporary_iterator = 1; temporary_iterator < network->num_of_layers - 1; temporary_iterator++) {
-        maxim = max(maxim, network->neurons_per_layer[temporary_iterator]);
+        maxim = max_i(maxim, network->neurons_per_layer[temporary_iterator]);
     }
-    maxim = max(maxim, network->num_of_inputs);
+    maxim = max_i(maxim, network->num_of_inputs);
     deltaweights = malloc(maxim*sizeof(double));
     for (neuron_counter = network->num_of_inputs; neuron_counter < network->sum_of_neurons; neuron_counter++) {
         for (temporary_neuron_counter = 0; temporary_neuron_counter < network->neuron_table[neuron_counter].num_inputs; temporary_neuron_counter++) {

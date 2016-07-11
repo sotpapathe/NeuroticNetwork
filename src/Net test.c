@@ -11,15 +11,15 @@ int main() {
     int npl[3],ret=0,retbef=0,count,tempret,neuroncounter;
     double *input,*intendedout;
     struct neural_net *net;
-    npl[0] = 5;
-    npl[1] = 4;
+    npl[0] = 6;
+    npl[1] = 5;
     npl[2] = 2;
     ret = create_network(3, 3, npl, &net);
     if (ret == _CREATION_MEMORY_ERROR) {
         return EXIT_FAILURE;
     }    
     printf("Function returned %d\n Press any key", ret);
-    scanf_s("%d", &ret);
+    scanf("%d", &ret);
     ret = EXIT_FAILURE;
     count = 0;
     input = malloc(8 * 3 * sizeof(double));
@@ -60,18 +60,18 @@ int main() {
     }
     printf("Function returned %d\n Press any key", ret);
     printf("Enter first input\n 380 is the exit number\n");
-    scanf_s("%lf", &input[0]);
+    scanf("%lf", &input[0]);
     while (input[0] != 380) {
         printf("\nEnter second input\n");
-        scanf_s("%lf", &input[1]);
+        scanf("%lf", &input[1]);
         printf("\nEnter third input\n");
-        scanf_s("%lf", &input[2]);
+        scanf("%lf", &input[2]);
         change_input(input, net);
         network_activate(net);
         //network_print_whole_out(net);
         network_print_output_only(net);
         printf("Enter first input\n 380 is the exit number\n");
-        scanf_s("%lf", input);
+        scanf("%lf", input);
     }
     network_delete(net);
     return EXIT_SUCCESS;
