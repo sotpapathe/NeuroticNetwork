@@ -23,6 +23,7 @@ along with NeuroticNetwork.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
+#include "essentials.h"
 /*
 ===========================================================================
 Public Function Declarations
