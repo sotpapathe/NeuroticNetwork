@@ -5,20 +5,22 @@
 
 #include "neuron.h"
 #include "network.h"
-#ifndef _DEBUG 
+#ifndef _DEBUG
 #define _DEBUG 0
 #endif
 int main() {
-    int npl[3],ret=0,retbef=0,count,tempret,neuroncounter;
+    int npl[5],ret=0,retbef=0,count,tempret,neuroncounter;
     double *input,*intendedout;
     struct neural_net *net;
     npl[0] = 6;
     npl[1] = 5;
     npl[2] = 2;
-    ret = create_network(3, 3, npl, &net);
+    //npl[3] = 5;
+    //npl[4] = 2;
+    ret = create_network(3, 3, npl, &net);//num of inputs, num of layers
     if (ret == _CREATION_MEMORY_ERROR) {
         return EXIT_FAILURE;
-    }    
+    }
     printf("Function returned %d\n Press any key", ret);
     scanf("%d", &ret);
     ret = EXIT_FAILURE;

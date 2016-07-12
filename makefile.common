@@ -10,7 +10,7 @@ CC = gcc
 CFLAGS = -w -O2 -std=gnu11
 
 # Compiler options for the debug executable
-DBG_CFLAGS = -g -Wall -Wno-unused-function -std=gnu11
+DBG_CFLAGS = -g -Wall -Wno-unused-function
 
 # Headers
 INCLUDE = 

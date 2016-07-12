@@ -16,7 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with NeuroticNetwork.  If not, see <http://www.gnu.org/licenses/>.
 */
-
+//#pragma GCC ivdep
 #include "neuron.h"
 #include "network.h"
 #include <stdlib.h>
@@ -44,7 +44,7 @@ int create_network               (int               num_of_inputs,
     int neuron_counter, sum_of_neurons = 0, current_layer_neuron = 0, layer_counter = 0, weight_counter, input_pointer;
     unsigned int current_num_of_inputs;
     double *weights_of_neurons;
-
+    int j;
 
     //Memory allocation of network
     network = malloc(sizeof(struct neural_net));
@@ -61,7 +61,6 @@ int create_network               (int               num_of_inputs,
     network->message            = "\0";
     network->last_learning_ret  = 0;
     network->learn_change_counter = 0;
-    network->learning_coefficient = 0.00005;
     network->learning_counter   = 0;
     network->noise_margin       = 0.03;
     network->num_of_inputs      = num_of_inputs;
@@ -88,18 +87,18 @@ int create_network               (int               num_of_inputs,
         if (current_layer_neuron > neurons_per_layer[layer_counter]) {//Layer change
             layer_counter += 1;
             current_layer_neuron = 1;
+            if (layer_counter == 0)
             input_pointer = neuron_counter - neurons_per_layer[layer_counter-1]-1;
         }
         neuron_init(&(network->neuron_table[neuron_counter]));
-        if (layer_counter == 0)
         {
-            for (int j = 0; j < network->num_of_inputs; j++){
+            for (j = 0; j < network->num_of_inputs; j++){
                 add_input(&(network->neuron_table[neuron_counter]), &(network->neuron_table[input_pointer + j]));
             }
         }
         else
         {
-            for (int j = 0; j < neurons_per_layer[layer_counter - 1]; j++){
+            for (j = 0; j < neurons_per_layer[layer_counter - 1]; j++){
                 add_input(&(network->neuron_table[neuron_counter]), &(network->neuron_table[input_pointer + j]));
             }
         }
@@ -128,7 +127,7 @@ int create_network               (int               num_of_inputs,
     for (neuron_counter = 0; neuron_counter < num_of_inputs; neuron_counter++) {
         neuron_init(&(network->neuron_table[neuron_counter]));
     }
-
+    network->learning_coefficient = 0.0000000000000000000000000001;
 
     *network_addr = network;//Return the address of the network struct
     return _RETURN_SUCCESS;
@@ -272,6 +271,7 @@ void errorback               (struct neural_net       *network,
         }
         neuron_deltaw(&(network->neuron_table[neuron_counter]), deltaweights);
     }
+    network->learn_change_counter++;
     free(deltaweights);
     free(delta);
     checkStagnated(network);
@@ -398,24 +398,28 @@ void adapt_learning_coeff       (struct neural_net *network,
 }
 
 void checkStagnated         (struct neural_net * network){
-  int i,j;
-  bool weightStagnated=true,outStagnated=true;
-  double randomizer,factor;
-  for (i=network->num_of_inputs; i<network->sum_of_neurons;i++)
-  {
-    weightStagnated &= network->neuron_table[i].stagnatedWeights;
-    outStagnated &= network->neuron_table[i].stagnatedOutput;
-  }
-  network->Stagnated=weightStagnated|outStagnated;
-  if (network->Stagnated==true){
-    for (i=network->num_of_inputs; i<network->sum_of_neurons; i++)
+  if (network->learn_change_counter > 50000000) {
+    int i,j;
+    bool weightStagnated=true,outStagnated=true;
+    double randomizer,factor;
+    for (i=network->num_of_inputs; i<network->sum_of_neurons;i++)
     {
-      for (j=0; j<network->neuron_table[i].num_inputs;j++)
+      weightStagnated &= network->neuron_table[i].stagnatedWeights;
+      outStagnated &= network->neuron_table[i].stagnatedOutput;
+    }
+    network->Stagnated=weightStagnated;//|outStagnated;
+    if (network->Stagnated==true){
+      //printf("\n stagnated \n");
+      for (i=network->num_of_inputs; i<network->sum_of_neurons; i++)
       {
-        factor = network->neuron_table[i].weights[j]/(10*RAND_MAX);
-        randomizer=rand()*factor;
-        network->neuron_table[i].weights[j] += (rand()>(RAND_MAX/2)) ? (-randomizer) : (randomizer);
+        for (j=0; j<network->neuron_table[i].num_inputs;j++)
+        {
+          factor = network->neuron_table[i].weights[j]/(1000*RAND_MAX);
+          randomizer=rand()*factor;
+          network->neuron_table[i].weights[j] += (rand()>(RAND_MAX/2)) ? (-randomizer) : (randomizer);
+        }
       }
     }
+    network->learn_change_counter = 0;
   }
 }
