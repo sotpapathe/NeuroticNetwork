@@ -32,7 +32,7 @@ void neuron_deltaw		(neuron		*target,
 						 double		*deltaw)
 {
 	int i;
-	
+
 	/* Loop over all weights of target neuron */
 	for (i=0; i<target->num_inputs; i++)
 	{
@@ -52,7 +52,7 @@ void neuron_setw		(neuron		*target,
 						 double		*deltaw)
 {
 	int i;
-	
+
 	/* Loop over all weights of target neuron */
 	for (i=0; i<target->num_inputs; i++)
 	{
@@ -74,13 +74,13 @@ void neuron_activate	(neuron		*target)
 	double x = 0;
 	/* Summation in a separate variable instead of the output
 	* allows for feedback on the neuron */
-	
+
 	/* Loop over all inputs of target neuron */
 	for (i=0; i<target->num_inputs; i++)
 	{
 		x = x + target->weights[i] * target->inputs[i]->output;
 	}
-	
+
 	/* Non-linear function */
 	target->output = 1 / ( 1 + exp(-x) );
 }
@@ -94,11 +94,11 @@ void neuron_free	(neuron		*target)
 	/* Zero */
 	target->num_inputs = 0;
 	target->output = 0;
-	
+
 	/* Free weight array */
 	free( target->weights );
 	target->weights = NULL;
-	
+
 	/* Do NOT free input array, it contains pointers to other neurons */
 	target->inputs = NULL;
 }
@@ -112,12 +112,12 @@ void neuron_init	(neuron		*target)
 	/* Zero */
 	target->num_inputs = 0;
 	target->output = 0;
-	
+
 	/* NULL */
 	target->weights = NULL;
 	target->lastWeights = NULL;
 	target->inputs = NULL;
-	
+
 	/* FALSE */
 	target->stagnatedWeights=false;
 	target->stagnatedOutput=false;
@@ -125,11 +125,11 @@ void neuron_init	(neuron		*target)
 
 void add_input(neuron *source, neuron *target)
 {
-    source->num_inputs++;
-    source->inputs = realloc(source->inputs, source->num_inputs*sizeof(struct neuron_t *));
+  source->num_inputs++;
+  source->inputs = realloc(source->inputs, source->num_inputs*sizeof(struct neuron_t *));
 	source->weights = realloc(source->weights, source->num_inputs*sizeof(double));
 	source->lastWeights = realloc(source->lastWeights, source->num_inputs*sizeof(double));
-    source->inputs[source->num_inputs - 1] = target;
+  source->inputs[source->num_inputs - 1] = target;
 	source->weights[source->num_inputs - 1] = 0.5;
 	source->lastWeights[source->num_inputs - 1] = 0.5;
 }

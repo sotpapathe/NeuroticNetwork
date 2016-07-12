@@ -27,7 +27,7 @@ This file is part of NeuroticNetwork.
 #include "neuron.h"
 
 
-/* 
+/*
 ===========================================================================
                            Still a prototype
                            Subject to change
@@ -42,7 +42,7 @@ This file is part of NeuroticNetwork.
 
 struct neural_net{                                 //Network Struct
         double              noise_margin;              //Noise margin of outputs, can be set at any number, default is 0.08
-        char                *message;                  //Pointer to message 
+        char                *message;                  //Pointer to message
         double              learning_coefficient;      //Error back propagation learning coefficient
         int                 last_learning_ret;
         int                 learn_change_counter;
@@ -51,6 +51,7 @@ struct neural_net{                                 //Network Struct
         int                 num_of_layers;             //Number of layers in the neural network
         int                 sum_of_neurons;            //Sum of neurons in network (Inputs are treated as neurons)
         int                 *neurons_per_layer;        //Table of neurons per layer
+        bool                Stagnated;                 //True if the network has stagnated
         neuron              *neuron_table;             //Table of network interconnects (1 dimensional)
 };
 
@@ -103,7 +104,7 @@ void errorback                     (struct neural_net       *network,
                                     double                  *intended_output);
 
 
-//Normalizes the weights of the neurons 
+//Normalizes the weights of the neurons
 void normalize_weights             (struct neural_net       *network);
 
 
@@ -141,9 +142,14 @@ void network_print_whole_out      (struct neural_net      *network);
 void network_print_output_only    (struct neural_net      *network);
 
 //Change the learning coefficient ofthe error back propagation method of learning
-void network_change_learning_coeff(struct neural_net *network, 
+void network_change_learning_coeff(struct neural_net *network,
                                    double new_learning_coefficient);
 
+//Adapt the learning coefficient so thatconvergence occurs faster. Experimental
 void adapt_learning_coeff         (struct neural_net *network,
                                    int               current_ret);
+                                   
+//Check if the network has reached a local extremum and randomize weights
+void checkStagnated               (struct neural_net *network);
+
 #endif

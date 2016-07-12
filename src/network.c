@@ -44,8 +44,8 @@ int create_network               (int               num_of_inputs,
     int neuron_counter, sum_of_neurons = 0, current_layer_neuron = 0, layer_counter = 0, weight_counter, input_pointer;
     unsigned int current_num_of_inputs;
     double *weights_of_neurons;
-    
-    
+
+
     //Memory allocation of network
     network = malloc(sizeof(struct neural_net));
     if (network == NULL) {//Check if memory was available to allocate
@@ -120,10 +120,10 @@ int create_network               (int               num_of_inputs,
         }
         network->neuron_table[neuron_counter].weights = weights_of_neurons;
         //network->neuron_table[neuron_counter].inputs = input_pointer;
-        
+
     }
-    
-    
+
+
     //Input layer initialization
     for (neuron_counter = 0; neuron_counter < num_of_inputs; neuron_counter++) {
         neuron_init(&(network->neuron_table[neuron_counter]));
@@ -222,7 +222,7 @@ void errorback               (struct neural_net       *network,
     next_layer = network->num_of_layers - 1;
     delta = malloc(network->sum_of_neurons*sizeof(double));
     intended_output_index = network->neurons_per_layer[network->num_of_layers - 1]-1;
-    
+
 
     //Output layer delta calculation
     for (neuron_counter = network->sum_of_neurons - 1;neuron_counter > ((network->sum_of_neurons - 1) - (network->neurons_per_layer[network->num_of_layers - 1])); neuron_counter--) {
@@ -274,6 +274,7 @@ void errorback               (struct neural_net       *network,
     }
     free(deltaweights);
     free(delta);
+    checkStagnated(network);
 }
 
 void normalize_weights(struct neural_net       *network) {
@@ -394,4 +395,27 @@ void adapt_learning_coeff       (struct neural_net *network,
             network->learn_change_counter = 0;
         }
     }
+}
+
+void checkStagnated         (struct neural_net * network){
+  int i,j;
+  bool weightStagnated=true,outStagnated=true;
+  double randomizer,factor;
+  for (i=network->num_of_inputs; i<network->sum_of_neurons;i++)
+  {
+    weightStagnated &= network->neuron_table[i].stagnatedWeights;
+    outStagnated &= network->neuron_table[i].stagnatedOutput;
+  }
+  network->Stagnated=weightStagnated|outStagnated;
+  if (network->Stagnated==true){
+    for (i=network->num_of_inputs; i<network->sum_of_neurons; i++)
+    {
+      for (j=0; j<network->neuron_table[i].num_inputs;j++)
+      {
+        factor = network->neuron_table[i].weights[j]/(10*RAND_MAX);
+        randomizer=rand()*factor;
+        network->neuron_table[i].weights[j] += (rand()>(RAND_MAX/2)) ? (-randomizer) : (randomizer);
+      }
+    }
+  }
 }
