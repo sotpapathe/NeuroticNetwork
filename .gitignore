@@ -36,5 +36,5 @@
 *.su
 
 # build and bin folders
-bin
-build
+bin/
+build/
