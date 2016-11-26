@@ -25,6 +25,7 @@
 #include <stdio.h>
 
 #include "neuron.h"
+#include "nn_config.h"
 
 
 /*
@@ -60,6 +61,10 @@ struct neural_net{                                 //Network Struct
                        Public Function Prototypes
 ===========================================================================
 */
+
+/* Show NeuroticNetwork version and license */
+void nn_info();
+
 /*Create a network*/
 /*Returns address of neural_net struct*/
 /*TO-DO: MAKE THIS VARADIC*/

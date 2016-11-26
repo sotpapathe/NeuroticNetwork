@@ -28,6 +28,9 @@
 #define _DEBUG 0
 #endif
 int main() {
+
+	nn_info();
+
     int npl[5],ret=0,retbef=0,count,tempret,neuroncounter;
     double *input,*intendedout;
     struct neural_net *net;

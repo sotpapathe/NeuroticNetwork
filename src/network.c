@@ -29,6 +29,25 @@ Public Function Declarations
 ===========================================================================
 */
 
+/* Show NeuroticNetwork version and license */
+void nn_info() {
+	printf("\n\t\tNeuroticNetwork, version %d.%d.%d\n\n", NN_MAJOR_VERSION, NN_MINOR_VERSION, NN_PATCH_VERSION);
+
+	printf("Copyright (C) 2016 Alexandros Tsonis, Sotiris Papatheodorou\n\n");
+
+	printf("This program is free software: you can redistribute it and/or modify\n\
+it under the terms of the GNU General Public License as published by\n\
+the Free Software Foundation, either version 3 of the License, or\n\
+(at your option) any later version.\n\
+\n\
+This program is distributed in the hope that it will be useful,\n\
+but WITHOUT ANY WARRANTY; without even the implied warranty of\n\
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the\n\
+GNU General Public License for more details.\n\
+\n\
+You should have received a copy of the GNU General Public License\n\
+along with this program. If not, see http://www.gnu.org/licenses/.\n\n");
+}
 
 /*Network creation*/
 /*NO ERROR CHECKING*/
@@ -432,7 +451,7 @@ void checkStagnated         (struct neural_net * network){
       {
         for (j=0; j<network->neuron_table[i].num_inputs;j++)
         {
-          factor = network->neuron_table[i].weights[j]/(1000*RAND_MAX);
+          factor = network->neuron_table[i].weights[j]/(1000.0*RAND_MAX);
           randomizer=rand()*factor;
           network->neuron_table[i].weights[j] += (rand()>(RAND_MAX/2)) ? (-randomizer) : (randomizer);
         }
