@@ -21,7 +21,7 @@ This file is part of NeuroticNetwork.
 #include <stdlib.h>
 
 #include "neuron.h"
-#include "essentials.h"
+
 /*
 ===========================================================================
                        Public Function Declarations

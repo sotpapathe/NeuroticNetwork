@@ -17,13 +17,12 @@ You should have received a copy of the GNU General Public License
 along with NeuroticNetwork.  If not, see <http://www.gnu.org/licenses/>.
 */
 //#pragma GCC ivdep
-#include "neuron.h"
 #include "network.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
-#include "essentials.h"
+
 /*
 ===========================================================================
 Public Function Declarations
