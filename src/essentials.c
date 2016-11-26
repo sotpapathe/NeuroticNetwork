@@ -17,6 +17,8 @@
 	along with NeuroticNetwork.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "essentials.h"
+
 //Essential functions
 
 int max_i(int a,int b)

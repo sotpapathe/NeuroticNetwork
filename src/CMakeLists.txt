@@ -2,12 +2,14 @@
 add_executable (NeuroticNetwork Net_test.c)
 
 # Source files for library
-set(NN_SRC network.c neuron.c essentials.c)
+set(NN_SRC essentials.c neuron.c network.c)
 # Create static libraries
 add_library(nn STATIC ${NN_SRC})
+if (CMAKE_COMPILER_IS_GNUCC)
+	target_link_libraries (nn m)
+endif (CMAKE_COMPILER_IS_GNUCC)
 
 # Link the libraries
-# target_link_libraries (NeuroticNetwork m)
 target_link_libraries (NeuroticNetwork nn)
 
 # Set executable output directory
