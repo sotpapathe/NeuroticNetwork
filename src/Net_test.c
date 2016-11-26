@@ -12,8 +12,8 @@ int main() {
     int npl[5],ret=0,retbef=0,count,tempret,neuroncounter;
     double *input,*intendedout;
     struct neural_net *net;
-    npl[0] = 6;
-    npl[1] = 5;
+    npl[0] = 7;
+    npl[1] = 6;
     npl[2] = 2;
     //npl[3] = 5;
     //npl[4] = 2;
@@ -57,7 +57,7 @@ int main() {
         count++;
         if (count % 10000 == 0) {
             count = 0;
-            network_print_whole_out(net);
+            //network_print_whole_out(net);
             printf("%d", network_test(net, input, intendedout, 8));
         }
     }

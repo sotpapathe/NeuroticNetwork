@@ -58,11 +58,21 @@ int create_network               (int               num_of_inputs,
         free(network);//Deallocate any allocated memory
         return _CREATION_MEMORY_ERROR;
     }
+    //Set network learning coefficient
+    network->learning_coefficient = 0.0000000000000000000000000001;
+
+    //Set network message to null
     network->message            = "\0";
+
+    //Set network specific learning parameters
     network->last_learning_ret  = 0;
     network->learn_change_counter = 0;
     network->learning_counter   = 0;
+
+    //Set network noise margin
     network->noise_margin       = 0.03;
+
+    //Set network's structure
     network->num_of_inputs      = num_of_inputs;
     network->num_of_layers      = num_of_layers;
     network->neurons_per_layer  = neurons_per_layer;
@@ -79,31 +89,42 @@ int create_network               (int               num_of_inputs,
     network->neuron_table       = neuron_table_address;
     network->sum_of_neurons     = sum_of_neurons;
     srand((int)time(NULL));
-    //Network Setup
+    //Network Structure Setup
     input_pointer = 0;
     layer_counter = 0;
+
+    //Setup each neuron parameters, inputs and weights
     for (neuron_counter = num_of_inputs; neuron_counter < sum_of_neurons; neuron_counter++) {
         current_layer_neuron += 1;
         if (current_layer_neuron > neurons_per_layer[layer_counter]) {//Layer change
             layer_counter += 1;
             current_layer_neuron = 1;
-            if (layer_counter == 0)
             input_pointer = neuron_counter - neurons_per_layer[layer_counter-1]-1;
         }
+
+        //Initialize the created neuron
         neuron_init(&(network->neuron_table[neuron_counter]));
+
+        //If the neuron is at the input layer, define its inputs to be the input vector
+        if (layer_counter == 0)
         {
             for (j = 0; j < network->num_of_inputs; j++){
                 add_input(&(network->neuron_table[neuron_counter]), &(network->neuron_table[input_pointer + j]));
             }
         }
+
+        //Else define its input to be the output of the previous layer
         else
         {
             for (j = 0; j < neurons_per_layer[layer_counter - 1]; j++){
                 add_input(&(network->neuron_table[neuron_counter]), &(network->neuron_table[input_pointer + j]));
             }
         }
+
+        //Get the number of inputs and define the weights
         current_num_of_inputs = network->neuron_table[neuron_counter].num_inputs;
         weights_of_neurons = malloc(current_num_of_inputs*sizeof(double));
+
         if (weights_of_neurons == NULL) {//Check if memory was available to allocate
             printf("\n---NOT ENOUGH MEMORY FOR NETWORK CREATION---\n");
             //Delete each neuron
@@ -114,20 +135,18 @@ int create_network               (int               num_of_inputs,
             free(network);//Deallocate any allocated memory
             return _CREATION_MEMORY_ERROR;
         }
+        //Randomize and normalize initial weights
         for (weight_counter = 0; weight_counter < current_num_of_inputs; weight_counter++) {
             weights_of_neurons[weight_counter] = (double)rand() / (double)RAND_MAX;
         }
+
         network->neuron_table[neuron_counter].weights = weights_of_neurons;
-        //network->neuron_table[neuron_counter].inputs = input_pointer;
-
     }
-
 
     //Input layer initialization
     for (neuron_counter = 0; neuron_counter < num_of_inputs; neuron_counter++) {
         neuron_init(&(network->neuron_table[neuron_counter]));
     }
-    network->learning_coefficient = 0.0000000000000000000000000001;
 
     *network_addr = network;//Return the address of the network struct
     return _RETURN_SUCCESS;
@@ -159,9 +178,9 @@ void network_delta         (struct neural_net       *network,
                             int                     layer_pointer,
                             int                     neuron_pointer,
                             double                  *deltaw){
+
     //Variable declaration
     int local_neuron_pointer = network->num_of_inputs, local_layer_pointer = 0, difference = 0;
-
 
     //Neuron search
     while (local_layer_pointer < layer_pointer) {
@@ -409,7 +428,7 @@ void checkStagnated         (struct neural_net * network){
     }
     network->Stagnated=weightStagnated;//|outStagnated;
     if (network->Stagnated==true){
-      //printf("\n stagnated \n");
+      //printf("\n stagnated \n")
       for (i=network->num_of_inputs; i<network->sum_of_neurons; i++)
       {
         for (j=0; j<network->neuron_table[i].num_inputs;j++)
