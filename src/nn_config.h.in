@@ -17,25 +17,19 @@
 	along with NeuroticNetwork.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-//Essentials
-#ifndef __essentials_h
-#define __essentials_h
+#ifndef __nn_config_h
+#define __nn_config_h
 
-#define false 0
-#define true 1
+/*
+===========================================================================
+                           cmake exported settings
+===========================================================================
+*/
 
-typedef char bool;
+/* Version number */
+#define NN_MAJOR_VERSION @NN_MAJOR_VERSION@
+#define NN_MINOR_VERSION @NN_MINOR_VERSION@
+#define NN_PATCH_VERSION @NN_PATCH_VERSION@
 
-int max_i(int a,int b);
-
-float max_f(float a, float b);
-
-double max_d(double a, double b);
-
-int min_i(int a,int b);
-
-float min_f(float a, float b);
-
-double min_d(double a, double b);
 
 #endif

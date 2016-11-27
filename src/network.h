@@ -1,20 +1,20 @@
 /*
-Authors: Alexandros Tsonis, Sotiris Papatheodorou
+	Copyright (C) 2016 Alexandros Tsonis, Sotiris Papatheodorou
 
-This file is part of NeuroticNetwork.
+	This file is part of NeuroticNetwork.
 
-    NeuroticNetwork is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	NeuroticNetwork is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    NeuroticNetwork is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	NeuroticNetwork is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with NeuroticNetwork.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with NeuroticNetwork.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef _network_h
@@ -25,6 +25,7 @@ This file is part of NeuroticNetwork.
 #include <stdio.h>
 
 #include "neuron.h"
+#include "nn_config.h"
 
 
 /*
@@ -60,6 +61,10 @@ struct neural_net{                                 //Network Struct
                        Public Function Prototypes
 ===========================================================================
 */
+
+/* Show NeuroticNetwork version and license */
+void nn_info();
+
 /*Create a network*/
 /*Returns address of neural_net struct*/
 /*TO-DO: MAKE THIS VARADIC*/
@@ -148,7 +153,7 @@ void network_change_learning_coeff(struct neural_net *network,
 //Adapt the learning coefficient so thatconvergence occurs faster. Experimental
 void adapt_learning_coeff         (struct neural_net *network,
                                    int               current_ret);
-                                   
+
 //Check if the network has reached a local extremum and randomize weights
 void checkStagnated               (struct neural_net *network);
 

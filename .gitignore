@@ -34,3 +34,10 @@
 # Debug files
 *.dSYM/
 *.su
+<<<<<<< HEAD
+=======
+
+# build and bin folders
+bin/
+build/
+>>>>>>> origin/master
