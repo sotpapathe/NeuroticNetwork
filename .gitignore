@@ -34,12 +34,3 @@
 # Debug files
 *.dSYM/
 *.su
-
-# CMake Files andFolders
-**/CMakeFiles
-**/cmake_install.cmake
-**/CMakeCache.txt
-**/Makefile
-#**/src/cmake_install.cmake
-#**/src/CMakeCache.txt
-#**/src/Makefile
