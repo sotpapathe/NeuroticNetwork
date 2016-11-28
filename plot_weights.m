@@ -1,7 +1,7 @@
 clear all;
 close all;
 
-names = readdir(".");
+names = readdir('.');
 
 for i=3:(length(names)-1);
   names=char(names);
@@ -12,8 +12,8 @@ for i=3:(length(names)-1);
   for j=1:numin;
     subplot(numin,1,j);
     plot(w(2:rows(w),j));
-    #ylabel("Weight %d",j);
+    %ylabel("Weight %d",j);
    end
-   #xlabel("Iteration"); 
+   %xlabel("Iteration"); 
    title(names(i,:));
  end
