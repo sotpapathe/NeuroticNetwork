@@ -468,6 +468,8 @@ void startLogging (struct neural_net *network)
 {
 	char originalpath[90], filename[100];
 	bool RIGHT_PATH;
+	int internalcounter=0;
+	int layercounter=1;
 	//Logging starts here
 	RIGHT_PATH=false;
 	network->NW = malloc((network->sum_of_neurons-network->num_of_inputs)*sizeof(FILE*));
@@ -479,11 +481,16 @@ void startLogging (struct neural_net *network)
 			originalpath[strlen(originalpath)-1]='\0';
 			for (int i=0;i<network->sum_of_neurons-network->num_of_inputs;i++)
 			{
+				internalcounter++;
+				if (internalcounter-1==network->neurons_per_layer[layercounter-1]){
+					layercounter++;
+					internalcounter=1;
+				}
 				//Append the necessary characters to the path and open the files
 				sprintf(filename,"%s",originalpath);
 				if (!((filename[strlen(filename)-2]=='\\') || (filename[strlen(filename)-2]=='/')))
 					sprintf(filename,"%s%c",filename,'/');
-				sprintf(filename,"%s%s%d",filename,"nw",i);
+				sprintf(filename,"%s%s%d%s%d",filename,"nw_",layercounter,"_",internalcounter);
 				strcat(filename,".txt");
 				network->NW[i]=fopen(filename,"w");
 
