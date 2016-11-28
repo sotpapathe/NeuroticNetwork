@@ -475,6 +475,8 @@ void startLogging (struct neural_net *network)
 	RIGHT_PATH=false;
 	network->NW = malloc((network->sum_of_neurons-network->num_of_inputs)*sizeof(FILE*));
 	while (RIGHT_PATH==false){
+		internalcounter=0;
+		layercounter=1;
 		printf("\n Type the destination path of the logs: ");
 		fgets (originalpath, 90, stdin);//Read file input
 		RIGHT_PATH=true;//Assume path given is correct (Will be checked later)
