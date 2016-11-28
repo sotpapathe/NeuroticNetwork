@@ -1,11 +1,11 @@
 clear all;
 close all;
 
-names = readdir('.');
+names = dir(".");
 
 for i=3:(length(names)-1);
-  names=char(names);
-  w=importdata(names(i,:));
+  %names=char(names);
+  w=importdata(names(i).name);
   numin=w(1,1);
   figure;
   
@@ -15,5 +15,5 @@ for i=3:(length(names)-1);
     %ylabel("Weight %d",j);
    end
    %xlabel("Iteration"); 
-   title(names(i,:));
+   title(names(i).name);
  end
