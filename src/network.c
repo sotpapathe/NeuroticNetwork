@@ -468,8 +468,8 @@ void startLogging (struct neural_net *network)
 {
 	char originalpath[90], filename[100];
 	bool RIGHT_PATH;
-	int internalcounter=0;
-	int layercounter=1;
+	volatile int internalcounter=0;
+	volatile int layercounter=1;
 	//Logging starts here
 	RIGHT_PATH=false;
 	network->NW = malloc((network->sum_of_neurons-network->num_of_inputs)*sizeof(FILE*));
