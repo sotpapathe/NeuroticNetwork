@@ -11,6 +11,9 @@ release:
 	cmake --build build/release -- -j2
 
 clean:
-	sudo rm -rf bin/*
-	sudo rm -rf build/*
+	rm -rf bin/*
+	rm -rf build/*
+
+clean_logs:
+	rm -f nw*
 
