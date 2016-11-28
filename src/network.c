@@ -490,8 +490,7 @@ void startLogging (struct neural_net *network)
 				sprintf(filename,"%s",originalpath);
 				if (!((filename[strlen(filename)-2]=='\\') || (filename[strlen(filename)-2]=='/')))
 					sprintf(filename,"%s%c",filename,'/');
-				sprintf(filename,"%s%s%d%s%d",filename,"nw_",layercounter,"_",internalcounter);
-				strcat(filename,".txt");
+				sprintf(filename,"%s%s%d%s%d%s",filename,"nw_",layercounter,"_",internalcounter,".txt");
 				network->NW[i]=fopen(filename,"w");
 
 				//Check if files can be created in the given file path
