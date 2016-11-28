@@ -21,10 +21,8 @@
 #ifndef __essentials_h
 #define __essentials_h
 
-#define false 0
-#define true 1
-
-typedef char bool;
+//Define a character variable with the name boolean
+typedef enum {false,true} bool;
 
 int max_i(int a,int b);
 

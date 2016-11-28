@@ -21,6 +21,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "neuron.h"
 #include "network.h"
@@ -31,11 +32,15 @@ int main() {
 
 	nn_info();
 
-    int npl[5],ret=0,retbef=0,count,tempret,neuroncounter;
+    int npl[5],ret=0,retbef=0,count,tempret,neuroncounter,i;
     double *input,*intendedout;
+		char filename[100],originalpath[90];
+		FILE** NW;
     struct neural_net *net;
-    npl[0] = 5;
-    npl[1] = 4;
+		char valid=0,inp;
+		bool IS_LOGGING;
+    npl[0] = 6;
+    npl[1] = 5;
     npl[2] = 2;
     //npl[3] = 5;
     //npl[4] = 2;
@@ -43,6 +48,30 @@ int main() {
     if (ret == _CREATION_MEMORY_ERROR) {
         return EXIT_FAILURE;
     }
+		while (valid==0){
+			printf("\n Do you want to log the weights of the neurons after each learning iteration? (Y/n)");
+			inp=fgetc(stdin);
+			if (inp=='y' || inp=='Y')
+			{
+				valid = 1;
+				IS_LOGGING=true;
+				fflush(stdin);
+			}
+			else if (inp=='n' || inp=='N')
+			{
+				valid = 1;
+				IS_LOGGING=false;
+				fflush(stdin);
+			}
+			else
+			{
+				printf("\nWrong input! Please enter either Y or n\n");
+				fflush(stdin);
+			}
+		}
+		if (IS_LOGGING==true){
+			startLogging(net);
+		}
     printf("Function returned %d\n Press any key", ret);
     scanf("%d", &ret);
     ret = EXIT_FAILURE;
@@ -74,8 +103,17 @@ int main() {
     printf("Beginning learning process\n");
     network_print(net);
     count = 0;
+
+		if (IS_LOGGING==true){
+
+		}
     while (network_test(net, input, intendedout, 8)) {
         network_learn(net, input, intendedout, 8);
+
+				//Log neuron weights in files
+				if (IS_LOGGING==true){
+					networkLogging(net);
+				}
         count++;
         if (count % 10000 == 0) {
             count = 0;
@@ -83,6 +121,10 @@ int main() {
             printf("%d", network_test(net, input, intendedout, 8));
         }
     }
+		//Close file streams (weights don't get modified after this)
+		if (IS_LOGGING==true){
+			stopLogging(net);
+		}
     printf("Function returned %d\n Press any key", ret);
     printf("Enter first input\n 380 is the exit number\n");
     scanf("%lf", &input[0]);
@@ -99,5 +141,8 @@ int main() {
         scanf("%lf", input);
     }
     network_delete(net);
+
+
+
     return EXIT_SUCCESS;
 }

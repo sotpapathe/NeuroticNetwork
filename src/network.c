@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
+#include <string.h>
 
 /*
 ===========================================================================
@@ -77,7 +78,7 @@ int create_network               (int               num_of_inputs,
         return _CREATION_MEMORY_ERROR;
     }
     //Set network learning coefficient
-    network->learning_coefficient = 0.0000000000000000000000000001;
+    network->learning_coefficient = 0.05;
 
     //Set network message to null
     network->message            = "\0";
@@ -106,6 +107,7 @@ int create_network               (int               num_of_inputs,
     }
     network->neuron_table       = neuron_table_address;
     network->sum_of_neurons     = sum_of_neurons;
+		network->learning_coefficient *= sum_of_neurons;
     srand((int)time(NULL));
     //Network Structure Setup
     input_pointer = 0;
@@ -311,7 +313,7 @@ void errorback               (struct neural_net       *network,
     network->learn_change_counter++;
     free(deltaweights);
     free(delta);
-    checkStagnated(network);
+    //checkStagnated(network);
 }
 
 void normalize_weights(struct neural_net       *network) {
@@ -371,7 +373,7 @@ int network_test              (struct neural_net      *network,
                 output_counter++;
         }
     }
-    adapt_learning_coeff(network, return_value);
+    //adapt_learning_coeff(network, return_value);
     network->last_learning_ret = return_value;
     return return_value;
 }
@@ -459,4 +461,70 @@ void checkStagnated         (struct neural_net * network){
     }
     network->learn_change_counter = 0;
   }
+}
+
+//Create logging files
+void startLogging (struct neural_net *network)
+{
+	char originalpath[90], filename[100];
+	bool RIGHT_PATH;
+	//Logging starts here
+	RIGHT_PATH=false;
+	network->NW = malloc((network->sum_of_neurons-network->num_of_inputs)*sizeof(FILE*));
+	while (RIGHT_PATH==false){
+		printf("\n Type the destination path of the logs: ");
+		fgets (originalpath, 90, stdin);//Read file input
+		RIGHT_PATH=true;//Assume path given is correct (Will be checked later)
+		if ((strlen(originalpath)>0) && (originalpath[strlen(originalpath)-1]=='\n')){
+			originalpath[strlen(originalpath)-1]='\0';
+			for (int i=0;i<network->sum_of_neurons-network->num_of_inputs;i++)
+			{
+				//Append the necessary characters to the path and open the files
+				sprintf(filename,"%s",originalpath);
+				if (!((filename[strlen(filename)-2]=='\\') || (filename[strlen(filename)-2]=='/')))
+					sprintf(filename,"%s%c",filename,'/');
+				sprintf(filename,"%s%s%d",filename,"nw",i);
+				strcat(filename,".txt");
+				network->NW[i]=fopen(filename,"w");
+
+				//Check if files can be created in the given file path
+				if (network->NW[i]==NULL)
+				{
+					RIGHT_PATH=false;
+					printf("WRONG FILE PATH NAME\n");
+					break;
+				}
+			}
+		}
+
+	}
+	//Format log files
+	for (int i=network->num_of_inputs;i<network->sum_of_neurons;i++)
+	{
+		for (int j=0;j<network->neuron_table[i].num_inputs;j++){
+			fprintf(network->NW[i-network->num_of_inputs],"%d ",network->neuron_table[i].num_inputs);
+		}
+		fprintf(network->NW[i-network->num_of_inputs],"\n");
+	}
+}
+
+//Log current weights
+void networkLogging               (struct neural_net *network)
+{
+	for (int i=network->num_of_inputs;i<network->sum_of_neurons;i++)
+	{
+		for (int j=0;j<network->neuron_table[i].num_inputs;j++){
+			fprintf(network->NW[i-network->num_of_inputs],"%lf ",network->neuron_table[i].weights[j]);
+		}
+		fprintf(network->NW[i-network->num_of_inputs],"\n");
+	}
+}
+
+//Close logging files and flush buffer
+void stopLogging                  (struct neural_net *network)
+{
+	for (int i=0;i<network->sum_of_neurons-network->num_of_inputs;i++)
+	{
+		fclose(network->NW[i]);
+	}
 }

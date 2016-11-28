@@ -54,6 +54,7 @@ struct neural_net{                                 //Network Struct
         int                 *neurons_per_layer;        //Table of neurons per layer
         bool                Stagnated;                 //True if the network has stagnated
         neuron              *neuron_table;             //Table of network interconnects (1 dimensional)
+        FILE                **NW;                      //Network logging files
 };
 
 /*
@@ -156,5 +157,14 @@ void adapt_learning_coeff         (struct neural_net *network,
 
 //Check if the network has reached a local extremum and randomize weights
 void checkStagnated               (struct neural_net *network);
+
+//Create files for logging
+void startLogging                 (struct neural_net *network);
+
+//Log current weights
+void networkLogging               (struct neural_net *network);
+
+//Close logging files and flush buffer
+void stopLogging                  (struct neural_net *network);
 
 #endif
