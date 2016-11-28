@@ -470,6 +470,7 @@ void startLogging (struct neural_net *network)
 	bool RIGHT_PATH;
 	volatile int internalcounter=0;
 	volatile int layercounter=1;
+	volatile int i;
 	//Logging starts here
 	RIGHT_PATH=false;
 	network->NW = malloc((network->sum_of_neurons-network->num_of_inputs)*sizeof(FILE*));
@@ -479,11 +480,11 @@ void startLogging (struct neural_net *network)
 		RIGHT_PATH=true;//Assume path given is correct (Will be checked later)
 		if ((strlen(originalpath)>0) && (originalpath[strlen(originalpath)-1]=='\n')){
 			originalpath[strlen(originalpath)-1]='\0';
-			for (int i=0;i<network->sum_of_neurons-network->num_of_inputs;i++)
+			for (i=0;i<network->sum_of_neurons-network->num_of_inputs;i++)
 			{
-				internalcounter++;
+				internalcounter+=1;
 				if (internalcounter-1==network->neurons_per_layer[layercounter-1]){
-					layercounter++;
+					layercounter+=1;
 					internalcounter=1;
 				}
 				//Append the necessary characters to the path and open the files
