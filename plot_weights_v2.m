@@ -22,11 +22,11 @@ basename = 'nw';
 
 % Loop over all layers
 layers_exist = true;
-layer = 0;
+layer = 1;
 while layers_exist
     
     % Loop over each neuron in the layer
-    neuron = 0;
+    neuron = 1;
     while true
         % Create file name and check if the file exists
         fname=sprintf( [basename '_%d_%d.txt'], layer, neuron);
